@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 自動化產出 Word 新聞稿 - 教學流程</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --code-bg: #282c34;
+            --code-text: #abb2bf;
+        }
+
+        body {
+            font-family: '微軟正黑體', 'Microsoft JhengHei', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header p {
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .accordion {
+            padding: 20px;
+        }
+
+        .step {
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+        }
+
+        .step-header {
+            background-color: #fff;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.1rem;
+            user-select: none;
+        }
+
+        .step-header:hover {
+            background-color: #f8f9fa;
+        }
+
+        .step-number {
+            background-color: var(--accent-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .step-title {
+            flex-grow: 1;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .step.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .step-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #fafafa;
+            border-top: 1px solid #eee;
+        }
+
+        .content-inner {
+            padding: 20px;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow-x: auto;
+            position: relative;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+
+        .success {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #155724;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Python 自動化產出 Word 新聞稿</h1>
+        <p>互動式教學流程表：點擊步驟展開查看詳細說明</p>
+    </header>
+
+    <div class="accordion">
+        <!-- Step 1 -->
+        <div class="step">
+            <div class="step-header">
+                <span class="step-number">1</span>
+                <span class="step-title">環境準備：安裝套件</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="step-content">
+                <div class="content-inner">
+                    <p>在開始寫程式之前，必須先安裝 <code>python-docx</code> 模組，這是專門用來產生 Word 檔的工具。</p>
+                    <div class="note">注意：這一步必須在「命令提示字元 (CMD)」中執行，不能在 Python (>>>) 裡面執行。</div>
+                    <p>請打開 CMD，輸入以下指令並按下 Enter：</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">複製</button>
+                        <pre>pip install python-docx</pre>
+                    </div>
+                    <p>若看到 <code>Successfully installed...</code> 或 <code>Requirement already satisfied</code> 代表成功。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step">
+            <div class="step-header">
+                <span class="step-number">2</span>
+                <span class="step-title">準備程式碼：自動生成腳本</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="step-content">
+                <div class="content-inner">
+                    <p>這是我們修正完成的完整程式碼。它會自動抓取您的桌面路徑，並將寫好的新聞稿內容填入。</p>
+                    <p>請複製下方完整的程式碼：</p>
+                    <div class="code-block">
+                        <button class="copy-btn" onclick="copyCode(this)">複製</button>
+<pre>import os
+import docx
+from docx.shared import Pt
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+# 1. 設定桌面路徑 (自動抓取您的桌面)
+desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+filename = os.path.join(desktop_path, '新聞稿_臺東大學MOU_20251231.docx')
+
+print(f"準備將檔案存到：{filename}")
+
+# 2. 建立文件
+doc = docx.Document()
+
+# 設定字體 (標楷體)
+style = doc.styles['Normal']
+style.font.name = '標楷體'
+style.font.size = Pt(14)
+style.font.complex_script = True
+try:
+    doc.styles['Normal']._element.rPr.rFonts.set(docx.oxml.ns.qn('w:eastAsia'), '標楷體')
+except:
+    pass
+
+# --- 加入內容 ---
+# 標題
+p = doc.add_paragraph('新聞稿')
+p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+p.runs[0].font.size = Pt(24)
+p.runs[0].font.bold = True
+
+doc.add_paragraph('發佈日期：2025 年 12 月 31 日').alignment = WD_ALIGN_PARAGRAPH.RIGHT
+
+p_title = doc.add_paragraph('標題：臺東官學強強聯手！教育處攜手臺東大學體育系簽署MOU　共享活水湖基地深化海洋教育')
+p_title.runs[0].font.bold = True
+p_title.runs[0].font.size = Pt(16)
+
+# 內文段落
+doc.add_paragraph('第一段：破題')
+doc.add_paragraph('【官學結盟共享資源，打造優質水域教育環境】\n為落實推動戶外與海洋教育，臺東縣政府教育處於今（31）日在臺東市活水湖與國立臺東大學體育學系正式簽署「水域運動推廣交流合作備忘錄（MOU）」。教育處處長蔡美瑤表示，本次合作主動鏈結在地高等教育資源，透過官學結盟引進大學端的專業場地、器材與師資，將為全縣親師生打造最安全、優質的水域學習環境。')
+
+doc.add_paragraph('第二段：詳述')
+doc.add_paragraph('【鎖定三大合作面向，解決學校師資設備困境】\n教育處指出，本次備忘錄鎖定三大核心合作面向：首先是「場地與器材共享」，大學端將依互惠原則開放活水湖基地及專業設備供學校申請；其次為「增能與專業發展」，共享培訓名額提升教師知能；最後是「人力資源支援」，由體育系師生協助推動重點課程。')
+
+doc.add_paragraph('第三段：補充')
+doc.add_paragraph('【大手牽小手傳承經驗，東河國小師生共同見證】\n簽署儀式邀請東河國小師生在場見證。國立臺東大學體育學系系主任溫卓謀表示，透過落實場地與器材的共享，能直接回饋在地基礎教育，讓臺東學子從小就能接觸到正規且安全的水域運動指導。')
+
+doc.add_paragraph('第四段：結語')
+doc.add_paragraph('【建立長久合作機制，樹立全國水域教育標竿】\n教育處進一步說明，本合作備忘錄效期為三年，未來將持續研議更多元合作，建構完善的臺東海洋教育支持網，將臺東打造為全國水域運動的標竿縣市。')
+
+# 分隔線與欄位
+doc.add_paragraph('-'*20)
+doc.add_paragraph('新聞聯絡人\n【姓名】：(請填入)\n【電話】：(請填入)\n【信箱】：(請填入)\n')
+doc.add_paragraph('本活動是否預計安排縣長出席\n□ 是     ■ 否\n')
+doc.add_paragraph('承辦              科長              專員              副處長              處長').alignment = WD_ALIGN_PARAGRAPH.CENTER
+doc.add_paragraph('\n如非安排縣長出席，本活動仍發採訪通知\n■ (請勾選)')
+
+# 3. 執行存檔
+try:
+    doc.save(filename)
+    print("--------------------------------------------------")
+    print(f"成功！檔案已建立於桌面：{filename}")
+    print("--------------------------------------------------")
+except Exception as e:
+    print(f"存檔失敗：{e}")</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step">
+            <div class="step-header">
+                <span class="step-number">3</span>
+                <span class="step-title">執行程式：貼上與確認</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="step-content">
+                <div class="content-inner">
+                    <p>現在我們要讓電腦執行剛剛複製的程式碼：</p>
+                    <ol>
+                        <li>打開 <strong>CMD</strong>（命令提示字元）。</li>
+                        <li>輸入 <code>python</code> 並按 Enter（看到 <code>>>></code> 符號）。</li>
+                        <li><strong>按滑鼠右鍵</strong>貼上剛剛複製的所有程式碼。</li>
+                        <li>貼上後，因為程式碼最後有縮排，<strong>請按鍵盤上的「Enter」鍵兩次</strong>。</li>
+                    </ol>
+                    <div class="success">
+                        <strong>關鍵點：</strong> 看到 <code>成功！檔案已建立於桌面...</code> 的訊息出現，才算真正完成。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step">
+            <div class="step-header">
+                <span class="step-number">4</span>
+                <span class="step-title">成果驗收：檢查桌面</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="step-content">
+                <div class="content-inner">
+                    <p>最後一步，享受成果！</p>
+                    <ul>
+                        <li>回到您的電腦桌面。</li>
+                        <li>尋找檔案：<code>新聞稿_臺東大學MOU_20251231.docx</code>。</li>
+                        <li>打開確認內容格式是否正確。</li>
+                    </ul>
+                    <p>恭喜！您已經成功完成 Python 自動化文書處理。</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.step-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const step = header.parentElement;
+            const content = header.nextElementSibling;
+            
+            // Toggle active class
+            step.classList.toggle('active');
+
+            // Handle slide animation
+            if (step.classList.contains('active')) {
+                content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                content.style.maxHeight = 0;
+            }
+        });
+    });
+
+    function copyCode(btn) {
+        const pre = btn.nextElementSibling;
+        const textArea = document.createElement('textarea');
+        textArea.value = pre.textContent;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        const originalText = btn.textContent;
+        btn.textContent = '已複製！';
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
